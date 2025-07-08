@@ -1,20 +1,15 @@
-import pyttsx3
+import subprocess
+import os
 
-# Make the engine global so it doesn’t get garbage collected
-engine = pyttsx3.init()
+PIPER_BIN = os.path.expanduser("~/piper_install/piper")
+VOICE_EN = os.path.expanduser("~/piper_install/voice_en.onnx")
+VOICE_HI = os.path.expanduser("~/piper_install/voice_hi.onnx")
 
-def speak_text(text, lang="en-IN"):
-    voices = engine.getProperty("voices")
-
-    selected_voice = None
-    for voice in voices:
-        if lang in voice.id:
-            selected_voice = voice.id
-            break
-
-    if selected_voice:
-        engine.setProperty("voice", selected_voice)
-
-    engine.setProperty("rate", 150)
-    engine.say(text)
-    engine.runAndWait()
+def speak_with_piper(text, lang="en-IN"):
+    # Choose model based on language
+    model = VOICE_HI if lang.startswith("hi") else VOICE_EN
+    # Generate a temporary WAV file
+    out_file = "/tmp/tts_out.wav"
+    cmd = f'echo "{text}" | "{PIPER_BIN}" --model "{model}" --output_file "{out_file}"'
+    subprocess.run(cmd, shell=True, check=True)
+    subprocess.run(['aplay', out_file], check=True)

@@ -1,7 +1,7 @@
 from flask import Flask, jsonify
 from flask_cors import CORS
 from vosk_stt import recognize_speech
-from tts import speak_text
+from tts import speak_with_piper
 import requests
 
 app = Flask(__name__)
@@ -30,7 +30,7 @@ def voice_chat():
     reply = query_llama(input_text)
     print("LLaMA:", reply)
 
-    speak_text(reply, lang)
+    speak_with_piper(reply, lang)
     return jsonify({"input": input_text, "reply": reply})
 
 if __name__ == "__main__":

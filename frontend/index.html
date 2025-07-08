@@ -3,24 +3,115 @@
 <head>
   <meta charset="UTF-8">
   <title>LLaMA Voice Chatbot</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f2f2f2;
+      text-align: center;
+      padding: 20px;
+    }
+
+    h2 {
+      color: #4A90E2;
+    }
+
+    #chat-box {
+      background: white;
+      max-width: 600px;
+      margin: 20px auto;
+      padding: 15px;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+      text-align: left;
+    }
+
+    .message {
+      margin: 10px 0;
+      padding: 10px;
+      border-radius: 10px;
+      max-width: 80%;
+      clear: both;
+    }
+
+    .user {
+      background-color: #d1e8ff;
+      float: right;
+      text-align: right;
+    }
+
+    .bot {
+      background-color: #e6ffe6;
+      float: left;
+      text-align: left;
+    }
+
+    #voice-button {
+      background: #4A90E2;
+      color: white;
+      border: none;
+      padding: 12px 20px;
+      font-size: 16px;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+
+    #voice-button:hover {
+      background-color: #357ABD;
+    }
+
+    .loader {
+      font-style: italic;
+      color: #888;
+    }
+  </style>
 </head>
 <body>
+
   <h2>🎤 Hindi-English Voice Chatbot (Offline)</h2>
-  <button onclick="startVoiceChat()">🎙️ Start Voice Chat</button>
-  <p><strong>You said:</strong> <span id="user"></span></p>
-  <p><strong>LLaMA 3 replied:</strong> <span id="reply"></span></p>
+  <button id="voice-button" onclick="startVoiceChat()">🎙️ Start Voice Chat</button>
+
+  <div id="chat-box">
+    <!-- Chat will load here -->
+  </div>
 
   <script>
     async function startVoiceChat() {
-      document.getElementById("user").textContent = "Listening...";
-      document.getElementById("reply").textContent = "";
+      const chatBox = document.getElementById("chat-box");
+
+      const loader = document.createElement("div");
+      loader.textContent = "🎤 Listening...";
+      loader.className = "loader";
+      chatBox.appendChild(loader);
 
       const res = await fetch("http://localhost:5000/voice-chat");
       const data = await res.json();
 
-      document.getElementById("user").textContent = data.input;
-      document.getElementById("reply").textContent = data.reply;
+      await loadChatHistory();  // Update chat with full history
+
+      loader.remove();  // Remove the "Listening..." text
     }
+
+    async function loadChatHistory() {
+      const res = await fetch("http://localhost:5000/chat-history");
+      const history = await res.json();
+
+      const chatBox = document.getElementById("chat-box");
+      chatBox.innerHTML = "";
+
+      history.forEach(msg => {
+        const msgDiv = document.createElement("div");
+        msgDiv.className = `message ${msg.sender}`;
+        msgDiv.textContent = msg.text;
+        chatBox.appendChild(msgDiv);
+      });
+
+      // Auto-scroll to bottom
+      chatBox.scrollTop = chatBox.scrollHeight;
+    }
+
+    // Load chat on page load
+    loadChatHistory();
   </script>
+
 </body>
 </html>

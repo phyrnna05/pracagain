@@ -7,6 +7,8 @@ import requests
 app = Flask(__name__)
 CORS(app)
 
+conversation_history = []  # Store chat logs here
+
 OLLAMA_URL = "http://localhost:11434/api/generate"
 
 def query_llama(prompt):
@@ -30,8 +32,16 @@ def voice_chat():
     reply = query_llama(input_text)
     print("LLaMA:", reply)
 
+    # Store conversation
+    conversation_history.append({"sender": "user", "text": input_text})
+    conversation_history.append({"sender": "bot", "text": reply})
+
     speak_with_piper(reply, lang)
     return jsonify({"input": input_text, "reply": reply})
+
+@app.route("/chat-history", methods=["GET"])
+def get_chat_history():
+    return jsonify(conversation_history)
 
 if __name__ == "__main__":
     app.run(debug=True, port=5000)

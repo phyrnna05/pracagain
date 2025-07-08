@@ -1,9 +1,10 @@
 import subprocess
 import os
 
-PIPER_BIN = os.path.expanduser("~/piper_install/piper")
-VOICE_EN = os.path.expanduser("~/piper_install/voice_en.onnx")
-VOICE_HI = os.path.expanduser("~/piper_install/voice_hi.onnx")
+PIPER_BIN = os.path.expanduser("~/piper/piper")
+VOICE_EN = os.path.expanduser("~/piper/voice_en.onnx")
+VOICE_HI = os.path.expanduser("~/piper/voice_hi.onnx")
+
 
 def speak_with_piper(text, lang="en-IN"):
     # Choose model based on language

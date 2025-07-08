@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>LLaMA Voice Chatbot</title>
+</head>
+<body>
+  <h2>🎤 Hindi-English Voice Chatbot (Offline)</h2>
+  <button onclick="startVoiceChat()">🎙️ Start Voice Chat</button>
+  <p><strong>You said:</strong> <span id="user"></span></p>
+  <p><strong>LLaMA 3 replied:</strong> <span id="reply"></span></p>
+
+  <script>
+    async function startVoiceChat() {
+      document.getElementById("user").textContent = "Listening...";
+      document.getElementById("reply").textContent = "";
+
+      const res = await fetch("http://localhost:5000/voice-chat");
+      const data = await res.json();
+
+      document.getElementById("user").textContent = data.input;
+      document.getElementById("reply").textContent = data.reply;
+    }
+  </script>
+</body>
+</html>
